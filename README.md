@@ -4,6 +4,7 @@
 Snapgram est une application mobile inspirée d’Instagram permettant aux utilisateurs de partager des images et vidéos, interagir entre eux et communiquer en temps réel.
 
 🎯 Objectifs
+
 Développer une application mobile complète
 Implémenter un système d’authentification
 Créer un feed dynamique
