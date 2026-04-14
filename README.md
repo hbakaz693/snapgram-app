@@ -1,4 +1,4 @@
-## 1. Snapgram App
+## 1. 📱Snapgram App
 🚀 Description
 
 Snapgram est une application mobile inspirée d’Instagram permettant aux utilisateurs de partager des images et vidéos, interagir entre eux et communiquer en temps réel.
