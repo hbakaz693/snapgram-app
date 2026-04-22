@@ -19,8 +19,7 @@ Application mobile inspirée d’Instagram permettant de partager des images et 
 - React Native (Expo)
 
 ### Backend
-- Node.js
-- Express.js
+- Spring boot
 
 ### Base de données
 - MongoDB
