@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
@@ -48,3 +49,64 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+=======
+# 📱 Snapgram App
+
+## 📝 Description
+Application mobile inspirée d’Instagram permettant de partager des images et vidéos, interagir avec d’autres utilisateurs et communiquer en temps réel.
+
+---
+
+## 🎯 Objectifs
+- Développer une application mobile complète
+- Implémenter un système d’authentification
+- Créer un feed dynamique
+- Permettre l’interaction entre utilisateurs
+
+---
+
+## 🛠️ Technologies
+
+### Frontend
+- React Native (Expo)
+
+### Backend
+- Spring boot
+
+### Base de données
+- MongoDB
+
+---
+
+## ✨ Fonctionnalités (MVP)
+- Authentification (Login / Register)
+- Publication d’images
+- Feed (fil d’actualité)
+- Like et commentaires
+- Profil utilisateur
+
+---
+
+## 🚀 Fonctionnalités futures
+- Chat en temps réel
+- Appels vidéo
+- Notifications
+- Stories
+
+---
+
+## 📁 Structure du projet
+frontend/ → Application mobile  
+backend/ → API serveur  
+assets/ → Ressources
+
+---
+
+## ⚙️ Installation
+
+```bash
+git clone https://github.com/your-username/snapgram-app.git
+cd snapgram-app
+npm install
+npm start
+>>>>>>> 529f0ab0498edae030f51779be9ea3eb33eeb871
