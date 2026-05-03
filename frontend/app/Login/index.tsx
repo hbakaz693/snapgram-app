@@ -16,7 +16,8 @@ export default function Header() {
       return;
     }
     // Ici vous pouvez ajouter votre logique d'authentification
-    Alert.alert("Connexion", `Tentative de connexion avec ${email}`);
+    //Alert.alert("Connexion", `Tentative de connexion avec ${email}`);
+    router.replace("/Profile");
   };
 
   return (
