@@ -17,17 +17,40 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = () => {
-    if (!name || !email || !password) {
-      Alert.alert("Erreur", "Veuillez remplir tous les champs");
-      return;
+  const handleRegister = async () => {
+  if (!name || !email || !password) {
+    Alert.alert("Erreur", "Veuillez remplir tous les champs");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://10.195.237.144:8080/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: name,        // ⚠️ important (mapping backend)
+        email: email,
+        password: password,
+        fullName: name,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      Alert.alert("Succès", "Compte créé 🎉");
+      router.replace("/Login");
+    } else {
+      Alert.alert("Erreur", data.message || "Erreur serveur");
     }
 
-    Alert.alert("Inscription", `Bienvenue ${name} 🎉`);
-
-    // 👉 Exemple navigation vers login après inscription
-    router.replace("/Login");
-  };
+  } catch (error) {
+    Alert.alert("Erreur", "Impossible de contacter le serveur");
+    console.log(error);
+  }
+};
 
   return (
     <View style={styles.container}>
