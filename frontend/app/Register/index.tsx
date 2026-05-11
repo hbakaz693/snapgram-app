@@ -18,56 +18,53 @@ export default function Register() {
   const [password, setPassword] = useState("");
 
   const handleRegister = async () => {
-  if (!name || !email || !password) {
-    Alert.alert("Erreur", "Veuillez remplir tous les champs");
-    return;
-  }
-
-  try {
-    const response = await fetch("http://10.195.237.144:8080/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: name,        // ⚠️ important (mapping backend)
-        email: email,
-        password: password,
-        fullName: name,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      Alert.alert("Succès", "Compte créé 🎉");
-      router.replace("/Login");
-    } else {
-      Alert.alert("Erreur", data.message || "Erreur serveur");
+    if (!name || !email || !password) {
+      Alert.alert("Erreur", "Veuillez remplir tous les champs");
+      return;
     }
 
-  } catch (error) {
-    Alert.alert("Erreur", "Impossible de contacter le serveur");
-    console.log(error);
-  }
-};
+    try {
+      const response = await fetch(
+        "http://10.68.202.144:8080/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: name,
+            email: email,
+            password: password,
+            fullName: name,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Succès", "Compte créé 🎉");
+        router.replace("/Login");
+      } else {
+        Alert.alert("Erreur", data.message || "Erreur serveur");
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Erreur", "Impossible de contacter le serveur");
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {/* Logo */}
       <TouchableOpacity onPress={() => router.push("/")}>
         <View style={styles.logoBox}>
           <Ionicons name="flash" size={40} color="#0a7a3d" />
         </View>
       </TouchableOpacity>
 
-      {/* Nom app */}
       <Text style={styles.title}>Snapgram</Text>
-
-      {/* Sous-titre */}
       <Text style={styles.subtitle}>Créer un compte</Text>
 
-      {/* Formulaire */}
       <View style={styles.formContainer}>
         <TextInput
           style={styles.input}

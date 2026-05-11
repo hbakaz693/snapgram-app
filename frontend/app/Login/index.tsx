@@ -1,42 +1,94 @@
 import React, { useState } from "react";
-import { Router} from "expo-router";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function Header() {
-  const router=useRouter();
+export default function Login() {
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert("Erreur", "Veuillez remplir tous les champs");
+  const handleLogin = async () => {
+  if (!email || !password) {
+    Alert.alert("Erreur", "Veuillez remplir tous les champs");
+    return;
+  }
+
+  try {
+    console.log("📤 Envoi requête...");
+    
+    const response = await fetch("http://10.68.202.144:8080/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
+
+    console.log("📥 Status:", response.status);
+    console.log("📥 Headers:", response.headers.get("content-type"));
+
+    // ✅ Lire le texte d'abord
+    const textResponse = await response.text();
+    console.log("📄 Réponse brute:", textResponse);
+
+    // ✅ Si la réponse est vide
+    if (!textResponse || textResponse.trim().length === 0) {
+      Alert.alert("Erreur", "Le serveur n'a pas répondu correctement");
       return;
     }
-    // Ici vous pouvez ajouter votre logique d'authentification
-    //Alert.alert("Connexion", `Tentative de connexion avec ${email}`);
-    router.replace("/Profile");
-  };
 
+    // ✅ Essayer de parser le JSON
+    let data;
+    try {
+      data = JSON.parse(textResponse);
+    } catch (e) {
+      console.log("Erreur JSON:", e);
+      Alert.alert("Erreur", "Réponse invalide du serveur");
+      return;
+    }
+
+    if (response.ok) {
+      Alert.alert("Succès", "Connexion réussie 🎉");
+      router.replace("/Home");
+    } else {
+      Alert.alert("Erreur", data.message || "Email ou mot de passe incorrect");
+    }
+    
+  } catch (error) {
+    console.log("❌ Erreur:", error);
+    Alert.alert("Erreur", "Impossible de contacter le serveur");
+  }
+};
   return (
     <View style={styles.container}>
-      
       {/* Logo */}
       <TouchableOpacity onPress={() => router.push("/")}>
-  <View style={styles.logoBox}>
-    <Ionicons name="flash" size={40} color="#0a7a3d" />
-  </View>
-</TouchableOpacity>
-      {/* Nom de l'app */}
+        <View style={styles.logoBox}>
+          <Ionicons name="flash" size={40} color="#0a7a3d" />
+        </View>
+      </TouchableOpacity>
+
+      {/* Titre */}
       <Text style={styles.title}>Snapgram</Text>
 
-      {/* Sous-titre */}
-      <Text style={styles.subtitle}>Se Connecter</Text>
+      {/* Sous titre */}
+      <Text style={styles.subtitle}>Se connecter</Text>
 
-      {/* Formulaire de connexion */}
+      {/* Formulaire */}
       <View style={styles.formContainer}>
+        {/* Email */}
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -47,6 +99,7 @@ export default function Header() {
           autoCapitalize="none"
         />
 
+        {/* Password */}
         <TextInput
           style={styles.input}
           placeholder="Mot de passe"
@@ -56,18 +109,42 @@ export default function Header() {
           secureTextEntry
         />
 
-        <TouchableOpacity onPress={() => Alert.alert("Mot de passe oublié", "Fonctionnalité à venir")}>
-          <Text style={styles.forgotPassword}>Mot de passe oublié ?</Text>
+        {/* Forgot password */}
+        <TouchableOpacity
+          onPress={() =>
+            Alert.alert(
+              "Mot de passe oublié",
+              "Fonctionnalité à venir"
+            )
+          }
+        >
+          <Text style={styles.forgotPassword}>
+            Mot de passe oublié ?
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Se connecter</Text>
+        {/* Bouton login */}
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={handleLogin}
+        >
+          <Text style={styles.loginButtonText}>
+            Se connecter
+          </Text>
         </TouchableOpacity>
 
+        {/* Register */}
         <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>Pas de compte ? </Text>
-          <TouchableOpacity  onPress={() => router.replace("/Register") }>
-            <Text style={styles.signupLink}>S'inscrire</Text>
+          <Text style={styles.signupText}>
+            Pas de compte ?
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => router.replace("/Register")}
+          >
+            <Text style={styles.signupLink}>
+              S'inscrire
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -98,7 +175,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     color: "#fff",
-  }, 
+  },
 
   subtitle: {
     fontSize: 14,
@@ -109,7 +186,7 @@ const styles = StyleSheet.create({
 
   formContainer: {
     width: "85%",
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderRadius: 15,
     padding: 20,
     shadowColor: "#000",
@@ -148,7 +225,7 @@ const styles = StyleSheet.create({
   },
 
   loginButtonText: {
-    color: "white",
+    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
