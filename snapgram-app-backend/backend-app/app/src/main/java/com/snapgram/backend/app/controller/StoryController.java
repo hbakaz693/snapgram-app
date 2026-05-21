@@ -71,7 +71,7 @@ public class StoryController {
             Files.write(filePath, file.getBytes());
             
             // 6. Créer l'URL publique
-            String imageUrl = "http://10.68.202.144:8080/uploads/stories/" + fileName;
+            String imageUrl = "http://10.25.108.144:808/uploads/stories/" + fileName;
             
             // 7. Sauvegarder en base
             Story story = Story.builder()

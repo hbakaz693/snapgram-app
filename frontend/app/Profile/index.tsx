@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import ProfilePostGrid from '../ProfilePostsGrid.tsx';
 import {
   View,
   Text,
@@ -7,6 +8,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   BackHandler,
+  ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 
@@ -28,6 +30,7 @@ const ProfileHeader = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView>
       <View style={styles.statsContainer}>
         <Image
           source={require('../../assets/images/lena.png')}
@@ -80,12 +83,20 @@ const ProfileHeader = () => {
         <Text style={styles.tabText}>Tags</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.pub}>
+        <ProfilePostGrid/>
+      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
 
+  pub:{
+    paddingBottom:80,
+
+  },
  tabActive:{
  color:'#000',
  borderBottomWidth:2,

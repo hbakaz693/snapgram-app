@@ -25,7 +25,7 @@ export default function Register() {
 
     try {
       const response = await fetch(
-        "http://10.68.202.144:8080/api/auth/register",
+        "http://10.25.108.144:808/api/auth/register",
         {
           method: "POST",
           headers: {

@@ -1,469 +1,292 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from "react";
 import {
-  View, Text, StyleSheet, SafeAreaView, StatusBar,
-  TouchableOpacity, ScrollView, Alert, Image, ActivityIndicator
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
-import { router } from 'expo-router';
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  TouchableOpacity,
+  ActivityIndicator,
+  FlatList,
+  Modal,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useFocusEffect, useRouter } from "expo-router";
+import AfficherPost from "../AfficherPost";
+import { replace } from "expo-router/build/global-state/routing";
+import StoriesList from "../StoriesList/StoriesList";
 
-export default function App() {
-  const [stories, setStories] = useState([]);
-  const [userId] = useState(2); // À remplacer par l'ID de l'utilisateur connecté
-  const [loading, setLoading] = useState(false);
+const API_BASE_URL = "http://10.25.108.144:808";
+
+type Post = {
+  id: number;
+  imageUrl?: string;
+  imgUrl?: string;
+  description?: string;
+  createdAt?: string;
+  username?: string;
+  userAvatar?: string;
+};
+
+export default function Home() {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [showMenu, setShowMenu] = useState(false); // Ajout manquant
+  const [showOptions, setShowOptions] = useState(false);
+  const router=useRouter();
 
-  const openAddMenu = () => {
-    setShowMenu(true); // Afficher le menu
-  };
+  const fetchPosts = async () => {
+    setLoadingPosts(true);
 
-  useEffect(() => {
-    fetchStories();
-    requestPermissions();
-  }, []);
-
-  // Fermer le menu quand on clique ailleurs
-  useEffect(() => {
-    const handleOutsideClick = () => {
-      if (showMenu) setShowMenu(false);
-    };
-    // On ajoute un écouteur global
-    return () => {};
-  }, [showMenu]);
-
-  // Demander la permission d'accéder à la galerie
-  const requestPermissions = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission refusée', 'Vous devez autoriser l\'accès à la galerie pour ajouter des stories');
-    }
-  };
-
-  // Récupérer toutes les stories de l'utilisateur
-  const fetchStories = async () => {
     try {
-      const response = await fetch(`http://10.68.202.144:8080/api/stories/user/${userId}`);
+      const response = await fetch(`${API_BASE_URL}/api/posts`);
+
       if (response.ok) {
         const data = await response.json();
-        console.log('Stories chargées:', data);
-        setStories(data);
+        setPosts(data);
       } else {
-        console.log('Erreur chargement stories:', response.status);
+        setPosts([]);
       }
     } catch (error) {
-      console.log('Erreur fetchStories:', error);
-    }
-  };
-
-  // Ajouter une nouvelle story
-  const addStory = async () => {
-    setShowMenu(false); // Fermer le menu
-    try {
-      // 1. Ouvrir la galerie
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.8,
-        base64: false,
-      });
-
-      // 2. Si l'utilisateur annule
-      if (result.canceled) {
-        console.log('Sélection annulée');
-        return;
-      }
-
-      setLoading(true);
-
-      // 3. Préparer l'image
-      const imageUri = result.assets[0].uri;
-      const filename = imageUri.split('/').pop();
-      
-      // 4. Créer FormData pour l'envoi
-      const formData = new FormData();
-      formData.append('image', {
-        uri: imageUri,
-        name: filename,
-        type: 'image/jpeg',
-      });
-
-      console.log('📤 Envoi de la story...');
-
-      // 5. Envoyer au backend
-      const response = await fetch(
-        `http://10.68.202.144:8080/api/stories/add?userId=${userId}`,
-        {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      // 6. Lire la réponse
-      const responseText = await response.text();
-      console.log('📥 Réponse:', response.status, responseText);
-
-      let data = {};
-      if (responseText && responseText.trim().length > 0) {
-        try {
-          data = JSON.parse(responseText);
-        } catch (e) {
-          console.log('Réponse non JSON');
-        }
-      }
-
-      // 7. Vérifier le résultat
-      if (response.ok) {
-        await fetchStories(); // Recharger la liste des stories
-        Alert.alert('✅ Succès', 'Votre story a été ajoutée avec succès !');
-      } else {
-        Alert.alert('❌ Erreur', data.message || 'Impossible d\'ajouter la story');
-      }
-      
-    } catch (error) {
-      console.log('❌ Erreur addStory:', error);
-      Alert.alert('Erreur', 'Problème de connexion au serveur');
+      console.log("Erreur fetchPosts:", error);
+      setPosts([]);
     } finally {
-      setLoading(false);
+      setLoadingPosts(false);
     }
   };
 
-  // Ajouter une publication
-  const addPost = () => {
-    setShowMenu(false);
-    router.push("/AddPost");
+  useFocusEffect(
+    useCallback(() => {
+      fetchPosts();
+    }, [])
+  );
+
+  const refreshData = async () => {
+    setRefreshing(true);
+    await fetchPosts();
+    setRefreshing(false);
   };
 
-  // Rafraîchir les stories
-  const refreshStories = async () => {
-    setRefreshing(true);
-    await fetchStories();
-    setRefreshing(false);
+  const openPage = (page: string) => {
+    setShowOptions(false);
+    router.push(page as any);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
-      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.logo}>Snapgram</Text>
+
+
         <View style={styles.headerIcons}>
-          <TouchableOpacity onPress={() => Alert.alert('Notifications', 'Fonctionnalité à venir')}>
+          <TouchableOpacity onPress={() => router.push("/Reel")}>
             <Ionicons name="heart-outline" size={26} color="#000" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => Alert.alert('Messages', 'Fonctionnalité à venir')}>
-            <Ionicons name="chatbubble-outline" size={24} color="#000" />
+
+          <TouchableOpacity onPress={() => setShowOptions(true)}>
+            <Ionicons name="add-outline" size={30} color="#000" />
           </TouchableOpacity>
-          
-          {/* Menu wrapper corrigé */}
-          <View style={styles.addMenuWrapper}>
-            <TouchableOpacity onPress={openAddMenu} disabled={loading}>
-              <Ionicons name="add-outline" size={26} color="#000" />
-            </TouchableOpacity>
-
-            {showMenu && (
-              <View style={styles.menu}>
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={addStory}
-                >
-                  <Text style={styles.menuText}>Ajouter Story</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={addPost}
-                >
-                  <Text style={styles.menuText}>Ajouter Publication</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
         </View>
       </View>
 
-      {/* SECTION STORIES - Cercles horizontaux */}
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        style={styles.storiesContainer}
-        contentContainerStyle={styles.storiesContent}
-      >
-        {/* Cercle "Votre story" avec bouton + */}
-        <TouchableOpacity style={styles.storyItem} onPress={addStory} disabled={loading}>
-          <View style={[styles.storyRing, styles.yourStoryRing]}>
-            {stories.length > 0 ? (
-              <Image 
-                source={{ uri: stories[stories.length - 1]?.imageUrl || stories[stories.length - 1]?.ImageUrl }} 
-                style={styles.storyImage}
-              />
-            ) : (
-              <View style={styles.avatarPlaceholder}>
-                <Ionicons name="person" size={36} color="#fff" />
-              </View>
-            )}
-            <View style={styles.yourStoryPlus}>
-              <Text style={styles.plusIcon}>+</Text>
+       <View style={styles.story}>
+          <StoriesList />
+      </View>
+
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <AfficherPost post={item} />}
+        refreshing={refreshing}
+        onRefresh={refreshData}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.feedContent}
+        ListEmptyComponent={
+          !loadingPosts ? (
+            <View style={styles.emptyFeed}>
+              <Ionicons name="images-outline" size={80} color="#ccc" />
+              <Text style={styles.emptyFeedTitle}>Aucune publication</Text>
+              <Text style={styles.emptyFeedText}>
+                Appuyez sur + pour ajouter
+              </Text>
             </View>
-          </View>
-          <Text style={styles.storyName}>Votre story</Text>
-        </TouchableOpacity>
-
-        {/* Afficher toutes les stories existantes */}
-        {stories.map((story, index) => (
-          <TouchableOpacity 
-            key={story.id} 
-            style={styles.storyItem}
-            onPress={() => Alert.alert('Story', `Voir la story ${index + 1}`)}
-          >
-            <View style={styles.storyRing}>
-              <Image 
-                source={{ uri: story.imageUrl || story.ImageUrl }} 
-                style={styles.storyImage}
-              />
+          ) : null
+        }
+        ListFooterComponent={
+          loadingPosts ? (
+            <View style={styles.loading}>
+               <ActivityIndicator size="large" color="#078738" />
             </View>
-            <Text style={styles.storyName}>
-              {index === 0 ? 'Récents' : `Il y a ${index}h`}
-            </Text>
-          </TouchableOpacity>
-        ))}
+          ) : null
+        }
+      />
 
-        {/* Indicateur de chargement */}
-        {loading && (
-          <View style={styles.loadingStory}>
-            <ActivityIndicator size="small" color="#e4405f" />
-          </View>
-        )}
-      </ScrollView>
-
-      {/* Indicateur de rafraîchissement */}
-      {refreshing && (
-        <View style={styles.refreshOverlay}>
-          <ActivityIndicator size="large" color="#078738" />
-        </View>
-      )}
-
-      {/* CONTENU PRINCIPAL (Feed) */}
-      <ScrollView style={styles.feed}>
-        <View style={styles.feedPlaceholder}>
-          <Ionicons name="images-outline" size={80} color="#ccc" />
-          <Text style={styles.feedText}>Aucune publication</Text>
-          <Text style={styles.feedSubText}>Appuyez sur + pour ajouter une story</Text>
-        </View>
-      </ScrollView>
-
-      {/* BOTTOM NAVIGATION */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity>
-          <Ionicons name="home" size={28} color="#078738" />
+        <Ionicons name="home" size={28} color="#078738" />
+        <Ionicons name="search-outline" size={28} color="#000" />
+
+        <TouchableOpacity onPress={() => setShowOptions(true)}>
+          <Ionicons name="add-circle-outline" size={32} color="#000" />
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="search-outline" size={28} color="#000" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="play-circle-outline" size={28} color="#000" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="chatbubble-outline" size={28} color="#000" />
-        </TouchableOpacity>
-        <TouchableOpacity>
+
+        <Ionicons name="chatbubble-outline" size={28} color="#000" />
+        <TouchableOpacity onPress={()=>router.push("/Profile")}>
           <Ionicons name="person-outline" size={28} color="#000" />
         </TouchableOpacity>
       </View>
 
-      {/* LOADING OVERLAY */}
-      {loading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#fff" />
-          <Text style={styles.loadingText}>Ajout en cours...</Text>
-        </View>
-      )}
+      <Modal visible={showOptions} transparent animationType="slide">
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowOptions(false)}
+        >
+          <View style={styles.modalBox}>
+            <TouchableOpacity
+              style={styles.optionBtn}
+              onPress={() => openPage("/AddPost")}
+            >
+              <Ionicons name="image-outline" size={25} color="#078738" />
+              <Text style={styles.optionText}>Ajouter publication</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.optionBtn}
+              onPress={() => openPage("/AddStory")}
+            >
+              <Ionicons name="add-circle-outline" size={25} color="#078738" />
+              <Text style={styles.optionText}>Ajouter story</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.optionBtn}
+              onPress={() => openPage("/AddReel")}
+            >
+              <Ionicons name="videocam-outline" size={25} color="#078738" />
+              <Text style={styles.optionText}>Ajouter reel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.cancelBtn}
+              onPress={() => setShowOptions(false)}
+            >
+              <Text style={styles.cancelText}>Annuler</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  addMenuWrapper: {
-    position: "relative",
+  container: { flex: 1, backgroundColor: "#fff" },
+
+  story:{
+    paddingTop:10,
+    paddingBottom:15,
   },
-  menu: {
-    position: "absolute",
-    top: 35,
-    right: 0,
-    width: 190,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    paddingVertical: 6,
-    borderWidth: 0.5,
-    borderColor: "#dbdbdb",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 8,
-    zIndex: 999,
-  },
-  menuItem: {
-    paddingVertical: 13,
-    paddingHorizontal: 15,
-  },
-  menuText: {
-    fontSize: 14,
-    color: "#262626",
-    fontWeight: "500",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
+
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#dbdbdb',
+    borderBottomColor: "#dbdbdb",
   },
+
   logo: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     color: "#078738",
   },
+
   headerIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 20,
   },
-  storiesContainer: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#dbdbdb',
-    paddingVertical: 12,
+
+  feedContent: { paddingBottom: 90 },
+
+  emptyFeed: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 150,
   },
-  storiesContent: {
-    paddingHorizontal: 12,
-    gap: 16,
-    alignItems: 'center',
-  },
-  storyItem: {
-    alignItems: 'center',
-    gap: 6,
-    width: 74,
-  },
-  storyRing: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    borderWidth: 2,
-    borderColor: '#e4405f',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  storyImage: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-  },
-  yourStoryRing: {
-    borderColor: '#dbdbdb',
-    position: 'relative',
-  },
-  yourStoryPlus: {
-    position: 'absolute',
-    bottom: -2,
-    right: -2,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#0095f6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  plusIcon: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  avatarPlaceholder: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: '#e4405f',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  storyName: {
-    fontSize: 12,
-    color: '#262626',
-    marginTop: 4,
-  },
-  loadingStory: {
-    width: 72,
-    height: 72,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingBottom: 34,
-    paddingTop: 12,
-    borderTopWidth: 0.7,
-    borderTopColor: '#dbdbdb',
-    backgroundColor: '#fff',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  loadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    color: '#fff',
-    marginTop: 10,
-    fontSize: 16,
-  },
-  refreshOverlay: {
-    position: 'absolute',
-    top: 100,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  feed: {
-    flex: 1,
-    marginBottom: 50,
-  },
-  feedPlaceholder: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 100,
-  },
-  feedText: {
+
+  emptyFeedTitle: {
     fontSize: 18,
-    color: '#999',
+    color: "#999",
     marginTop: 10,
   },
-  feedSubText: {
+
+  emptyFeedText: {
     fontSize: 14,
-    color: '#bbb',
+    color: "#bbb",
     marginTop: 5,
+  },
+
+  loading: { paddingVertical: 30 },
+
+  bottomNav: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingBottom: 28,
+    borderTopWidth: 0.7,
+    borderTopColor: "#dbdbdb",
+    backgroundColor: "#fff",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "flex-end",
+  },
+
+  modalBox: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+  },
+
+  optionBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 15,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+
+  optionText: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#111",
+  },
+
+  cancelBtn: {
+    marginTop: 15,
+    backgroundColor: "#f2f2f2",
+    padding: 15,
+    borderRadius: 15,
+    alignItems: "center",
+  },
+
+  cancelText: {
+    color: "red",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

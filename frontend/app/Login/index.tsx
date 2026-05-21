@@ -25,7 +25,7 @@ export default function Login() {
   try {
     console.log("📤 Envoi requête...");
     
-    const response = await fetch("http://10.68.202.144:8080/api/auth/login", {
+    const response = await fetch("http://10.25.108.144:808/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
