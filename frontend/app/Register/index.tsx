@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Base_URL } from "@/config/api";
 
 export default function Register() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function Register() {
 
     try {
       const response = await fetch(
-        "http://10.25.108.144:808/api/auth/register",
+        `${Base_URL}/api/auth/register`,
         {
           method: "POST",
           headers: {

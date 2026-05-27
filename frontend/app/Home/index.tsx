@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,66 +6,16 @@ import {
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
-  ActivityIndicator,
-  FlatList,
   Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router, useFocusEffect, useRouter } from "expo-router";
-import AfficherPost from "../AfficherPost";
-import { replace } from "expo-router/build/global-state/routing";
+import { useRouter } from "expo-router";
+import AfficherPost from "../AfficherPost.tsx";
 import StoriesList from "../StoriesList/StoriesList";
 
-const API_BASE_URL = "http://10.25.108.144:808";
-
-type Post = {
-  id: number;
-  imageUrl?: string;
-  imgUrl?: string;
-  description?: string;
-  createdAt?: string;
-  username?: string;
-  userAvatar?: string;
-};
-
 export default function Home() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loadingPosts, setLoadingPosts] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const router=useRouter();
-
-  const fetchPosts = async () => {
-    setLoadingPosts(true);
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/posts`);
-
-      if (response.ok) {
-        const data = await response.json();
-        setPosts(data);
-      } else {
-        setPosts([]);
-      }
-    } catch (error) {
-      console.log("Erreur fetchPosts:", error);
-      setPosts([]);
-    } finally {
-      setLoadingPosts(false);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchPosts();
-    }, [])
-  );
-
-  const refreshData = async () => {
-    setRefreshing(true);
-    await fetchPosts();
-    setRefreshing(false);
-  };
+  const router = useRouter();
 
   const openPage = (page: string) => {
     setShowOptions(false);
@@ -79,9 +29,8 @@ export default function Home() {
       <View style={styles.header}>
         <Text style={styles.logo}>Snapgram</Text>
 
-
         <View style={styles.headerIcons}>
-          <TouchableOpacity onPress={() => router.push("/Reel")}>
+          <TouchableOpacity onPress={() => router.push("/ReelComponenet/Reel")}>
             <Ionicons name="heart-outline" size={26} color="#000" />
           </TouchableOpacity>
 
@@ -91,48 +40,28 @@ export default function Home() {
         </View>
       </View>
 
-       <View style={styles.story}>
-          <StoriesList />
+      <View style={styles.story}>
+        <StoriesList />
       </View>
 
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <AfficherPost post={item} />}
-        refreshing={refreshing}
-        onRefresh={refreshData}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.feedContent}
-        ListEmptyComponent={
-          !loadingPosts ? (
-            <View style={styles.emptyFeed}>
-              <Ionicons name="images-outline" size={80} color="#ccc" />
-              <Text style={styles.emptyFeedTitle}>Aucune publication</Text>
-              <Text style={styles.emptyFeedText}>
-                Appuyez sur + pour ajouter
-              </Text>
-            </View>
-          ) : null
-        }
-        ListFooterComponent={
-          loadingPosts ? (
-            <View style={styles.loading}>
-               <ActivityIndicator size="large" color="#078738" />
-            </View>
-          ) : null
-        }
-      />
+      <View style={styles.postsContainer}>
+        <AfficherPost />
+      </View>
 
       <View style={styles.bottomNav}>
         <Ionicons name="home" size={28} color="#078738" />
-        <Ionicons name="search-outline" size={28} color="#000" />
+
+        <TouchableOpacity onPress={() => router.replace("/SearchScreen")}>
+          <Ionicons name="search-outline" size={28} color="#000" />
+        </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setShowOptions(true)}>
           <Ionicons name="add-circle-outline" size={32} color="#000" />
         </TouchableOpacity>
 
         <Ionicons name="chatbubble-outline" size={28} color="#000" />
-        <TouchableOpacity onPress={()=>router.push("/Profile")}>
+
+        <TouchableOpacity onPress={() => router.push("/Profile")}>
           <Ionicons name="person-outline" size={28} color="#000" />
         </TouchableOpacity>
       </View>
@@ -182,11 +111,19 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { 
+    flex: 1, 
+    backgroundColor: "#fff" 
+  },
 
-  story:{
-    paddingTop:10,
-    paddingBottom:15,
+  story: {
+    paddingTop: 10,
+    paddingBottom: 15,
+  },
+
+  postsContainer: {
+    flex: 1,
+    paddingBottom: 80,
   },
 
   header: {
@@ -210,28 +147,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 20,
   },
-
-  feedContent: { paddingBottom: 90 },
-
-  emptyFeed: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: 150,
-  },
-
-  emptyFeedTitle: {
-    fontSize: 18,
-    color: "#999",
-    marginTop: 10,
-  },
-
-  emptyFeedText: {
-    fontSize: 14,
-    color: "#bbb",
-    marginTop: 5,
-  },
-
-  loading: { paddingVertical: 30 },
 
   bottomNav: {
     flexDirection: "row",

@@ -38,7 +38,6 @@ public class User {
     @Column(name = "full_name")
     private String fullName;
 
-    @Column(name = "profile_picture")
     private String profilePicture;
 
     @Column(length = 250)

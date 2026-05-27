@@ -1,5 +1,6 @@
 package com.snapgram.backend.app.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -31,4 +32,16 @@ public class PostService {
     public void deletPost(Long Id){
         postRepository.deleteByUserId(Id);
     }
+
+   public Post likePost(Long postId) {
+    Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new RuntimeException("Post introuvable"));
+
+    post.setLikeCount(post.getLikeCount() + 1);
+    post.setCreatedAt(LocalDateTime.now());
+
+    return postRepository.save(post);
+}
+
+
 }

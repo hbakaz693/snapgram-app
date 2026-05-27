@@ -7,9 +7,9 @@ import {
   Dimensions,
   ActivityIndicator,
 } from "react-native";
+import { Base_URL } from "@/config/api";
 
-const API_BASE_URL = "http://10.25.108.144:808";
-const userId = 2;
+const userId = 1;
 
 type Post = {
   id: number;
@@ -29,7 +29,7 @@ export default function ProfilePostsGrid() {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/posts/user/${userId}`);
+      const response = await fetch(`${Base_URL}/api/posts/user/${userId}`);
       const data = await response.json();
 
       console.log("POSTS:", data);

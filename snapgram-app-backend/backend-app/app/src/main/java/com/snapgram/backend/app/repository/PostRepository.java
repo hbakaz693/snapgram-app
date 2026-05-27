@@ -9,8 +9,15 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post,Long>{
-    //Recuperer tous les Pots d'un utilisateur
+
+    //Compte le nombre des posts dans la base pour chaque utilisateur
+    long countByUserId(Long userId);
+    
+
+   //Recuperer tous les Pots d'un utilisateur
     List<Post> findByUserIdOrderByCreatedAtDesc(long userId);
+
+    List<Post> findByUserId(Long userId);
 
     //Recuperer les dernier post ajoutee 
     List<Post> findTop10ByOrderByCreatedAtDesc();

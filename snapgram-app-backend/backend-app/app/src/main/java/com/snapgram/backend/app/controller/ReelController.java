@@ -1,6 +1,7 @@
 package com.snapgram.backend.app.controller;
 
 import com.snapgram.backend.app.model.Reel;
+import com.snapgram.backend.app.model.ReelComment;
 import com.snapgram.backend.app.service.ReelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,32 @@ import java.util.List;
 public class ReelController {
 
     private final ReelService reelService;
+
+    @PostMapping("/{reelId}/comment")
+public ReelComment addComment(
+        @PathVariable Long reelId,
+        @RequestParam Long userId,
+        @RequestParam String text
+) {
+    return reelService.addComment(reelId, userId, text);
+}
+
+@GetMapping("/{reelId}/comments")
+public List<ReelComment> getComments(
+        @PathVariable Long reelId
+) {
+    return reelService.getCommentsByReel(reelId);
+}
+
+
+
+    @PostMapping("/{reelId}/like")
+public Reel likeOrUnlikeReel(
+        @PathVariable Long reelId,
+        @RequestParam Long userId
+) {
+    return reelService.likeOrUnlikeReel(reelId, userId);
+}
 
     // Ajouter reel avec upload video
     @PostMapping(value = "/add", consumes = "multipart/form-data")

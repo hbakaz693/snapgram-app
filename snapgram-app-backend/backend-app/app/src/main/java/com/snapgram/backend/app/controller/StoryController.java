@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.snapgram.backend.app.config.AppConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,7 +72,7 @@ public class StoryController {
             Files.write(filePath, file.getBytes());
             
             // 6. Créer l'URL publique
-            String imageUrl = "http://10.25.108.144:808/uploads/stories/" + fileName;
+            String imageUrl =AppConfig.Base_URL+"/uploads/stories/" + fileName;
             
             // 7. Sauvegarder en base
             Story story = Story.builder()
@@ -85,7 +86,7 @@ public class StoryController {
             response.put("message", "Story ajoutée avec succès");
             response.put("storyId", savedStory.getId());
             response.put("imageUrl", imageUrl);
-            
+             
             return ResponseEntity.ok(response);
             
         } catch (IOException e) {

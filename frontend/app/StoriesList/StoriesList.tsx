@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { Base_URL } from "@/config/api";
 
 type Story = {
   id: number;
@@ -19,7 +20,6 @@ type Story = {
   };
 };
 
-const API_BASE_URL = "http://10.25.108.144:808";
 const userId = 1;
 
 export default function StoriesList() {
@@ -31,7 +31,7 @@ export default function StoriesList() {
 
   const fetchStories = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/stories/user/${userId}`);
+      const response = await fetch(`${Base_URL}/api/stories/user/${userId}`);
       const data = await response.json();
 
       console.log("Stories:", data);
@@ -77,7 +77,7 @@ export default function StoriesList() {
         type: "image/jpeg",
       } as any);
 
-      const response = await fetch(`${API_BASE_URL}/api/stories/add`, {
+      const response = await fetch(`${Base_URL}/api/stories/add`, {
         method: "POST",
         body: formData,
       });

@@ -12,15 +12,14 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-
-const API_BASE_URL = "http://10.25.108.144:808";
+import { Base_URL } from "@/config/api";
 
 export default function AddPost() {
   const [image, setImage] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const userId = 2;
+  const userId = 1;
 
   const pickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -63,7 +62,7 @@ export default function AddPost() {
       formData.append("description", description);
       formData.append("userId", userId.toString());
 
-      const response = await fetch(`${API_BASE_URL}/api/posts`, {
+      const response = await fetch(`${Base_URL}/api/posts`, {
         method: "POST",
         body: formData,
       });
