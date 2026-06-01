@@ -1,36 +1,50 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
   SafeAreaView,
-  StatusBar,
-  TouchableOpacity,
   ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
+  const router = useRouter();
+
+  const goToMessages = () => {
+    router.push('/Messages/messages' as any);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      
+
       {/* HEADER - Snapgram exactement comme l'image */}
       <View style={styles.header}>
         <Text style={styles.logo}>Snapgram</Text>
+
         <View style={styles.headerIcons}>
-          <TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.7}>
             <Ionicons name="heart-outline" size={26} color="#000" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.messageIcon}>
+
+          {/* Bouton pour aller vers app/Messages/messages.tsx */}
+          <TouchableOpacity
+            style={styles.messageIcon}
+            activeOpacity={0.7}
+            onPress={goToMessages}
+          >
             <Ionicons name="chatbubble-outline" size={24} color="#000" />
           </TouchableOpacity>
         </View>
       </View>
 
       {/* SECTION STORIES */}
-      <ScrollView 
-        horizontal 
+      <ScrollView
+        horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.storiesContainer}
         contentContainerStyle={styles.storiesContent}
@@ -42,17 +56,33 @@ export default function App() {
               <Text style={styles.plusIcon}>+</Text>
             </View>
           </View>
+
           <Text style={styles.storyName}>Votre story</Text>
         </View>
       </ScrollView>
 
       {/* Barre de navigation du bas */}
       <View style={styles.bottomNav}>
-        <Ionicons name="home" size={28} color="#000" />
-        <Ionicons name="search-outline" size={28} color="#000" />
-        <Ionicons name="play-circle-outline" size={28} color="#000" />
-        <Ionicons name="chatbubble-outline" size={28} color="#000" />
-        <Ionicons name="person-outline" size={28} color="#000" />
+        <TouchableOpacity activeOpacity={0.7}>
+          <Ionicons name="home" size={28} color="#000" />
+        </TouchableOpacity>
+
+        <TouchableOpacity activeOpacity={0.7}>
+          <Ionicons name="search-outline" size={28} color="#000" />
+        </TouchableOpacity>
+
+        <TouchableOpacity activeOpacity={0.7}>
+          <Ionicons name="play-circle-outline" size={28} color="#000" />
+        </TouchableOpacity>
+
+        {/* Bouton pour aller vers app/Messages/messages.tsx */}
+        <TouchableOpacity activeOpacity={0.7} onPress={goToMessages}>
+          <Ionicons name="chatbubble-outline" size={28} color="#000" />
+        </TouchableOpacity>
+
+        <TouchableOpacity activeOpacity={0.7}>
+          <Ionicons name="person-outline" size={28} color="#000" />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -63,6 +93,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+
   // HEADER
   header: {
     flexDirection: 'row',
@@ -74,10 +105,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#dbdbdb',
   },
   logo: {
-    fontSize: 28,  // ✅ nombre, pas string
+    fontSize: 28,
     fontWeight: '700',
     letterSpacing: -0.3,
-    color:"#078738"
+    color: '#078738',
   },
   headerIcons: {
     flexDirection: 'row',
@@ -87,7 +118,7 @@ const styles = StyleSheet.create({
   messageIcon: {
     marginLeft: 4,
   },
-  
+
   // STORIES
   storiesContainer: {
     borderBottomWidth: 0.5,
@@ -131,7 +162,7 @@ const styles = StyleSheet.create({
   },
   plusIcon: {
     color: '#fff',
-    fontSize: 14,  // ✅ nombre
+    fontSize: 14,
     fontWeight: 'bold',
   },
   avatarPlaceholder: {
@@ -144,15 +175,15 @@ const styles = StyleSheet.create({
   },
   avatarText: {
     color: '#fff',
-    fontSize: 24,  // ✅ nombre
+    fontSize: 24,
     fontWeight: '600',
   },
   storyName: {
-    fontSize: 12,  // ✅ nombre
+    fontSize: 12,
     color: '#262626',
     marginTop: 4,
   },
-  
+
   // BOTTOM NAVIGATION
   bottomNav: {
     flexDirection: 'row',
