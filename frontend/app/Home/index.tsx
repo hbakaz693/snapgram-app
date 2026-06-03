@@ -1,28 +1,87 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useCallback, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect, useRouter } from "expo-router";
+
 import {
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
+  ActivityIndicator,
+  FlatList,
+  Modal,
+} from "react-native";
 
-export default function App() {
+import AfficherPost from "../AfficherPost";
+import StoriesList from "../StoriesList/StoriesList";
+
+const API_BASE_URL = "http://10.25.108.144:8080";
+
+type Post = {
+  id: number;
+  imageUrl?: string;
+  imgUrl?: string;
+  description?: string;
+  createdAt?: string;
+  username?: string;
+  userAvatar?: string;
+};
+
+export default function Home() {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+
   const router = useRouter();
 
+  const fetchPosts = async () => {
+    setLoadingPosts(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/posts`);
+
+      if (response.ok) {
+        const data = await response.json();
+        setPosts(data);
+      } else {
+        setPosts([]);
+      }
+    } catch (error) {
+      console.log("Erreur fetchPosts:", error);
+      setPosts([]);
+    } finally {
+      setLoadingPosts(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPosts();
+    }, [])
+  );
+
+  const refreshData = async () => {
+    setRefreshing(true);
+    await fetchPosts();
+    setRefreshing(false);
+  };
+
+  const openPage = (page: string) => {
+    setShowOptions(false);
+    router.push(page as any);
+  };
+
   const goToMessages = () => {
-    router.push('/Messages/messages' as any);
+    router.push("/Messages/messages" as any);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
-      {/* HEADER - Snapgram exactement comme l'image */}
       <View style={styles.header}>
         <Text style={styles.logo}>Snapgram</Text>
 
@@ -31,59 +90,119 @@ export default function App() {
             <Ionicons name="heart-outline" size={26} color="#000" />
           </TouchableOpacity>
 
-          {/* Bouton pour aller vers app/Messages/messages.tsx */}
-          <TouchableOpacity
-            style={styles.messageIcon}
-            activeOpacity={0.7}
-            onPress={goToMessages}
-          >
+          <TouchableOpacity activeOpacity={0.7} onPress={goToMessages}>
             <Ionicons name="chatbubble-outline" size={24} color="#000" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => setShowOptions(true)}
+          >
+            <Ionicons name="add-outline" size={30} color="#000" />
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* SECTION STORIES */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.storiesContainer}
-        contentContainerStyle={styles.storiesContent}
-      >
-        {/* Votre story */}
-        <View style={styles.storyItem}>
-          <View style={[styles.storyRing, styles.yourStoryRing]}>
-            <View style={styles.yourStoryPlus}>
-              <Text style={styles.plusIcon}>+</Text>
+      <View style={styles.story}>
+        <StoriesList />
+      </View>
+
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <AfficherPost post={item} />}
+        refreshing={refreshing}
+        onRefresh={refreshData}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.feedContent}
+        ListEmptyComponent={
+          !loadingPosts ? (
+            <View style={styles.emptyFeed}>
+              <Ionicons name="images-outline" size={80} color="#ccc" />
+              <Text style={styles.emptyFeedTitle}>Aucune publication</Text>
+              <Text style={styles.emptyFeedText}>
+                Appuyez sur + pour ajouter
+              </Text>
             </View>
-          </View>
+          ) : null
+        }
+        ListFooterComponent={
+          loadingPosts ? (
+            <View style={styles.loading}>
+              <ActivityIndicator size="large" color="#078738" />
+            </View>
+          ) : null
+        }
+      />
 
-          <Text style={styles.storyName}>Votre story</Text>
-        </View>
-      </ScrollView>
-
-      {/* Barre de navigation du bas */}
       <View style={styles.bottomNav}>
         <TouchableOpacity activeOpacity={0.7}>
-          <Ionicons name="home" size={28} color="#000" />
+          <Ionicons name="home" size={28} color="#078738" />
         </TouchableOpacity>
 
         <TouchableOpacity activeOpacity={0.7}>
           <Ionicons name="search-outline" size={28} color="#000" />
         </TouchableOpacity>
 
-        <TouchableOpacity activeOpacity={0.7}>
-          <Ionicons name="play-circle-outline" size={28} color="#000" />
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => setShowOptions(true)}
+        >
+          <Ionicons name="add-circle-outline" size={32} color="#000" />
         </TouchableOpacity>
 
-        {/* Bouton pour aller vers app/Messages/messages.tsx */}
         <TouchableOpacity activeOpacity={0.7} onPress={goToMessages}>
           <Ionicons name="chatbubble-outline" size={28} color="#000" />
         </TouchableOpacity>
 
-        <TouchableOpacity activeOpacity={0.7}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => router.push("/Profile" as any)}
+        >
           <Ionicons name="person-outline" size={28} color="#000" />
         </TouchableOpacity>
       </View>
+
+      <Modal visible={showOptions} transparent animationType="slide">
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowOptions(false)}
+        >
+          <View style={styles.modalBox}>
+            <TouchableOpacity
+              style={styles.optionBtn}
+              onPress={() => openPage("/AddPost")}
+            >
+              <Ionicons name="image-outline" size={25} color="#078738" />
+              <Text style={styles.optionText}>Ajouter publication</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.optionBtn}
+              onPress={() => openPage("/AddStory")}
+            >
+              <Ionicons name="add-circle-outline" size={25} color="#078738" />
+              <Text style={styles.optionText}>Ajouter story</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.optionBtn}
+              onPress={() => openPage("/AddReel")}
+            >
+              <Ionicons name="videocam-outline" size={25} color="#078738" />
+              <Text style={styles.optionText}>Ajouter reel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.cancelBtn}
+              onPress={() => setShowOptions(false)}
+            >
+              <Text style={styles.cancelText}>Annuler</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -91,111 +210,117 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
 
-  // HEADER
+  story: {
+    paddingTop: 10,
+    paddingBottom: 15,
+  },
+
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#dbdbdb',
+    borderBottomColor: "#dbdbdb",
   },
+
   logo: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: -0.3,
-    color: '#078738',
+    color: "#078738",
   },
+
   headerIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 20,
   },
-  messageIcon: {
-    marginLeft: 4,
+
+  feedContent: {
+    paddingBottom: 90,
   },
 
-  // STORIES
-  storiesContainer: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#dbdbdb',
-    paddingVertical: 12,
+  emptyFeed: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 150,
   },
-  storiesContent: {
-    paddingHorizontal: 12,
-    gap: 16,
+
+  emptyFeedTitle: {
+    fontSize: 18,
+    color: "#999",
+    marginTop: 10,
   },
-  storyItem: {
-    alignItems: 'center',
-    gap: 6,
-  },
-  storyRing: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#e4405f',
-  },
-  yourStoryRing: {
-    borderColor: '#dbdbdb',
-    position: 'relative',
-  },
-  yourStoryPlus: {
-    position: 'absolute',
-    bottom: -2,
-    right: -2,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: '#0095f6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  plusIcon: {
-    color: '#fff',
+
+  emptyFeedText: {
     fontSize: 14,
-    fontWeight: 'bold',
-  },
-  avatarPlaceholder: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#e4405f',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  storyName: {
-    fontSize: 12,
-    color: '#262626',
-    marginTop: 4,
+    color: "#bbb",
+    marginTop: 5,
   },
 
-  // BOTTOM NAVIGATION
+  loading: {
+    paddingVertical: 30,
+  },
+
   bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
     paddingVertical: 12,
-    borderTopWidth: 0.5,
-    borderTopColor: '#dbdbdb',
-    backgroundColor: '#fff',
-    position: 'absolute',
+    paddingBottom: 28,
+    borderTopWidth: 0.7,
+    borderTopColor: "#dbdbdb",
+    backgroundColor: "#fff",
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "flex-end",
+  },
+
+  modalBox: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+  },
+
+  optionBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 15,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+
+  optionText: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#111",
+  },
+
+  cancelBtn: {
+    marginTop: 15,
+    backgroundColor: "#f2f2f2",
+    padding: 15,
+    borderRadius: 15,
+    alignItems: "center",
+  },
+
+  cancelText: {
+    color: "red",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

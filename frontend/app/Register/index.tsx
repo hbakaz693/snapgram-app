@@ -17,34 +17,54 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!name || !email || !password) {
       Alert.alert("Erreur", "Veuillez remplir tous les champs");
       return;
     }
 
-    Alert.alert("Inscription", `Bienvenue ${name} 🎉`);
+    try {
+      const response = await fetch(
+        "http://10.25.108.144:808/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: name,
+            email: email,
+            password: password,
+            fullName: name,
+          }),
+        }
+      );
 
-    // 👉 Exemple navigation vers login après inscription
-    router.replace("/Login");
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Succès", "Compte créé 🎉");
+        router.replace("/Login");
+      } else {
+        Alert.alert("Erreur", data.message || "Erreur serveur");
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Erreur", "Impossible de contacter le serveur");
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Logo */}
       <TouchableOpacity onPress={() => router.push("/")}>
         <View style={styles.logoBox}>
           <Ionicons name="flash" size={40} color="#0a7a3d" />
         </View>
       </TouchableOpacity>
 
-      {/* Nom app */}
       <Text style={styles.title}>Snapgram</Text>
-
-      {/* Sous-titre */}
       <Text style={styles.subtitle}>Créer un compte</Text>
 
-      {/* Formulaire */}
       <View style={styles.formContainer}>
         <TextInput
           style={styles.input}
