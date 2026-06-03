@@ -38,7 +38,7 @@ public class PostController {
         Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         Post post = new Post();
-        post.setImgUrl("http://10.25.108.144:808/uploads/" + fileName);
+        post.setImgUrl("http://10.79.217.144:808/uploads/" + fileName);
         post.setDescription(description);
         post.setUserId(userId);
 

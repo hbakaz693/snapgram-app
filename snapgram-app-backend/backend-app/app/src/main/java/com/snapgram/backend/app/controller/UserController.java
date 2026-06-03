@@ -47,7 +47,7 @@ public class UserController {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
 
-        user.setProfilePicture("http://10.25.108.144:808/uploads/profiles/" + fileName);
+        user.setProfilePicture("http://10.79.217.144:808/uploads/profiles/" + fileName);
 
         return userRepository.save(user);
     }

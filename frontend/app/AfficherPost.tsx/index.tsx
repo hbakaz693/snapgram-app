@@ -155,6 +155,10 @@ export default function AfficherPost() {
               <TouchableOpacity onPress={() => sharePost(item)}>
                 <Ionicons name="paper-plane-outline" size={26} color="#000" />
               </TouchableOpacity>
+
+              <TouchableOpacity>
+                <Ionicons name="bookmark-outline" size={28} color="white" />
+              </TouchableOpacity>
             </View>
 
             <Text style={styles.likes}>{item.likeCount || 0} j'adore</Text>

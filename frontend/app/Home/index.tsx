@@ -11,7 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import AfficherPost from "../AfficherPost.tsx";
-import StoriesList from "../StoriesList/StoriesList";
+import StoriesList from "../Story/StoriesList/StoriesList";
 
 export default function Home() {
   const [showOptions, setShowOptions] = useState(false);
@@ -91,7 +91,7 @@ export default function Home() {
 
             <TouchableOpacity
               style={styles.optionBtn}
-              onPress={() => openPage("/AddReel")}
+              onPress={() => openPage("/ReelComponenet/AddReel")}
             >
               <Ionicons name="videocam-outline" size={25} color="#078738" />
               <Text style={styles.optionText}>Ajouter reel</Text>

@@ -46,7 +46,7 @@ public class ReelService {
         Path filePath = uploadPath.resolve(fileName);
         file.transferTo(filePath.toFile());
 
-        String videoUrl = "http://10.25.108.144:8080/uploads/" + fileName;
+        String videoUrl = "http://10.79.217.144:808/uploads/" + fileName;
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));

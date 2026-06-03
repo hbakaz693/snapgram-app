@@ -6,7 +6,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.snapgram.backend.app.model.Post;
+import com.snapgram.backend.app.model.SavedPost;
 import com.snapgram.backend.app.repository.PostRepository;
+import com.snapgram.backend.app.repository.SavedPostRepository;
+import com.snapgram.backend.app.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +19,9 @@ import lombok.RequiredArgsConstructor;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
+
+    private final SavedPostRepository savedPostRepository;
 
     public Post createPost(Post post){
         return postRepository.save(post);
@@ -41,6 +47,33 @@ public class PostService {
     post.setCreatedAt(LocalDateTime.now());
 
     return postRepository.save(post);
+}
+
+public void saveOrUnsavePost(Long userId, Long postId) {
+
+    boolean saved =
+            savedPostRepository.existsByUserIdAndPostId(
+                    userId,
+                    postId
+            );
+
+    if (saved) {
+
+        savedPostRepository.deleteByUserIdAndPostId(
+                userId,
+                postId
+        );
+
+    } else {
+
+        SavedPost save = new SavedPost();
+
+        save.setUser(userRepository.findById(userId).get());
+
+        save.setPost(postRepository.findById(postId).get());
+
+        savedPostRepository.save(save);
+    }
 }
 
 
