@@ -21,3 +21,40 @@
   <li>Messages</li>
   <li>Likes / Commentaires</li>
 </ul>
+
+
+<h2>4. Technologies utilisées</h2>
+
+<h3>Frontend Mobile</h3>
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="50" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="50" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="50" />
+</p>
+
+<ul>
+  <li>React Native</li>
+  <li>Expo</li>
+  <li>TypeScript</li>
+</ul>
+
+<h3>Backend</h3>
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" width="50" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" width="50" />
+</p>
+
+<ul>
+  <li>Java</li>
+  <li>Spring Boot</li>
+  <li>REST API</li>
+</ul>
+
+<h3>Base de données</h3>
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftsqlserver/microsoftsqlserver-plain.svg" width="50" />
+</p>
+
+<ul>
+  <li>SQL Server</li>
+</ul>
