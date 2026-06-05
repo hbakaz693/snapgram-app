@@ -174,11 +174,11 @@ npx expo start
 </p>
 
 <p align="center">
-  <a href="https://github.com/votre-github">
+  <a href="https://github.com/hbakaz693">
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="40"/>
   </a>
   
-  <a href="https://linkedin.com/in/votre-linkedin">
+  <a href="https://www.linkedin.com/in/hicham-bakaz-155652396/">
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" width="40"/>
   </a>
 </p>
