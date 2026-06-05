@@ -162,13 +162,23 @@ npx expo start
 
 <h2>13. Auteur</h2>
 
-<p>
-  <strong>Hicham Bakaz</strong><br>
-  Master's Student in Intelligent Web and Data Science<br>
-  Full-Stack Developer & Data Science Enthusiast
+<p align="center">
+  <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="120"/>
 </p>
 
-<p>
-  GitHub : <a href="https://github.com/">Votre profil GitHub</a><br>
-  LinkedIn : <a href="https://linkedin.com/">Votre profil LinkedIn</a>
+<h3 align="center">Hicham Bakaz</h3>
+
+<p align="center">
+  Master's Student in Intelligent Web and Data Science<br>
+  Full-Stack Developer • Data Scientist • AI Enthusiast
+</p>
+
+<p align="center">
+  <a href="https://github.com/votre-github">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="40"/>
+  </a>
+  
+  <a href="https://linkedin.com/in/votre-linkedin">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" width="40"/>
+  </a>
 </p>
