@@ -58,3 +58,47 @@
 <ul>
   <li>SQL Server</li>
 </ul>
+
+<h2>6. Structure des dossiers</h2>
+
+<pre>
+Snapgram/
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── constants/
+│   └── assets/
+│
+├── backend/
+│   ├── controller/
+│   ├── model/
+│   ├── repository/
+│   ├── service/
+│   ├── config/
+│   └── uploads/
+</pre>
+
+<h2>7. Installation et lancement</h2>
+
+<h3>Backend</h3>
+
+<pre>
+cd backend
+mvn spring-boot:run
+</pre>
+
+<h3>Frontend</h3>
+
+<pre>
+cd frontend
+npm install
+npx expo start
+</pre>
+
+<h2>8. Configuration</h2>
+
+<ul>
+  <li><strong>Base URL :</strong> URL du backend Spring Boot</li>
+  <li><strong>CORS :</strong> autoriser les requêtes du frontend mobile</li>
+  <li><strong>Uploads :</strong> dossier pour stocker les images et vidéos</li>
+</ul>
