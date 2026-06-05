@@ -128,6 +128,8 @@ npx expo start
   <img src="screenShot/05.jpeg" width="220"/>
   <img src="screenShot/04.jpeg" width="220"/>
   <img src="screenShot/03.jpeg" width="220"/>
+</p>
+<P>
   <img src="screenShot/02.jpeg" width="220"/>
   <img src="screenShot/01.jpeg" width="220"/>
-</p>
+</P>
