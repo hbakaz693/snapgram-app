@@ -102,3 +102,15 @@ npx expo start
   <li><strong>CORS :</strong> autoriser les requêtes du frontend mobile</li>
   <li><strong>Uploads :</strong> dossier pour stocker les images et vidéos</li>
 </ul>
+
+
+<h2>9. API principales</h2>
+
+<ul>
+  <li><strong>Auth API</strong> → Gestion de l'authentification</li>
+  <li><strong>Users API</strong> → Gestion des utilisateurs et profils</li>
+  <li><strong>Posts API</strong> → Gestion des publications</li>
+  <li><strong>Stories API</strong> → Gestion des stories</li>
+  <li><strong>Reels API</strong> → Gestion des reels</li>
+  <li><strong>Messages API</strong> → Gestion de la messagerie</li>
+</ul>
