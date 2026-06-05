@@ -133,3 +133,42 @@ npx expo start
   <img src="screenShot/02.jpeg" width="220"/>
   <img src="screenShot/01.jpeg" width="220"/>
 </P>
+
+
+<h2>11. Démo vidéo</h2>
+
+<p>
+  Une vidéo de démonstration de l'application est disponible ci-dessous :
+</p>
+
+<p>
+  🎥 <a href="#">Voir la démo vidéo</a>
+</p>
+
+<h2>12. Améliorations futures</h2>
+
+<ul>
+  <li>Notifications en temps réel</li>
+  <li>Appels audio et vidéo</li>
+  <li>Système de suivi (Follow / Unfollow)</li>
+  <li>Sauvegarde des publications</li>
+  <li>Suggestions d'utilisateurs</li>
+  <li>Statut en ligne / hors ligne</li>
+  <li>Stories avec réactions</li>
+  <li>Mode sombre</li>
+  <li>Partage de publications</li>
+  <li>Messagerie temps réel avec WebSocket</li>
+</ul>
+
+<h2>13. Auteur</h2>
+
+<p>
+  <strong>Hicham Bakaz</strong><br>
+  Master's Student in Intelligent Web and Data Science<br>
+  Full-Stack Developer & Data Science Enthusiast
+</p>
+
+<p>
+  GitHub : <a href="https://github.com/">Votre profil GitHub</a><br>
+  LinkedIn : <a href="https://linkedin.com/">Votre profil LinkedIn</a>
+</p>
