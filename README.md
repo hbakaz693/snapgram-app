@@ -114,3 +114,20 @@ npx expo start
   <li><strong>Reels API</strong> → Gestion des reels</li>
   <li><strong>Messages API</strong> → Gestion de la messagerie</li>
 </ul>
+
+
+<h2>10. Captures d'écran</h2>
+
+<p align="center">
+  <img src="screenShot/08.jpeg" width="220"/>
+  <img src="screenShot/07.jpeg" width="220"/>
+  <img src="screenShot/06.jpeg" width="220"/>
+</p>
+
+<p align="center">
+  <img src="screenShot/05.jpeg" width="220"/>
+  <img src="screenShot/04.jpeg" width="220"/>
+  <img src="screenShot/03.jpeg" width="220"/>
+  <img src="screenShot/02.jpeg" width="220"/>
+  <img src="screenShot/01.jpeg" width="220"/>
+</p>
